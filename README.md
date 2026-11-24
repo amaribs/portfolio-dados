@@ -24,8 +24,6 @@ Atualmente, estou direcionando meu desenvolvimento profissional para Engenharia 
 
 📍 Rio de Janeiro, Brasil
 
-📧 **Email:** maribatiss76@gmail.com
-
 [🔗 LinkedIn](https://www.linkedin.com/in/mariana-batista-591a18141)
 
 ## 🛠️ Skills & Technologies
