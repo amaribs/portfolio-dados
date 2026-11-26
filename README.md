@@ -6,4 +6,4 @@
 
 📁 [projetos-powerbi](./projetos-powerbi)
 
-📁 [projetos-automacao](./projetos-automacao)
+📁 [projetos-vba](./projetos-vba)
