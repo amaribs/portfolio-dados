@@ -1,0 +1,167 @@
+# Automação VBA – Transformação de Dados do Microsoft Forms
+
+## 📌 Sobre o Projeto
+
+Este projeto tem como objetivo automatizar a transformação de dados exportados do Microsoft Forms utilizando VBA (Visual Basic for Applications).
+
+A solução foi desenvolvida para facilitar a organização, visualização e análise das respostas de formulários extensos, tornando os dados mais estruturados e preparados para análises posteriores.
+
+## 🚨 Problema Identificado
+
+Ao exportar respostas do Microsoft Forms para o Excel, cada pergunta do formulário é apresentada em uma coluna diferente.
+
+Em formulários com muitas perguntas, esse formato gera planilhas muito extensas horizontalmente, dificultando:
+
+- A visualização das informações;
+- A organização dos dados;
+- A aplicação de filtros;
+- A exploração e análise das respostas.
+
+## 🎯 Objetivo
+
+Desenvolver uma automação capaz de transformar a estrutura original da planilha, convertendo as respostas de um formato horizontal para um formato vertical, facilitando a leitura e o tratamento dos dados.
+
+## 💻 Solução Desenvolvida
+
+Foi criada uma macro em VBA responsável por:
+
+1. Ler os dados da planilha original (`Sheet2`);
+2. Preservar as cinco primeiras colunas, que contêm informações de identificação;
+3. Percorrer as demais colunas, identificando perguntas e respectivas respostas;
+4. Transformar cada resposta em um novo registro;
+5. Ignorar respostas vazias;
+6. Criar uma nova planilha chamada `Sheet2_Transformada` com os dados reorganizados.
+
+A planilha original é preservada, garantindo que os dados de origem não sejam alterados.
+
+## 🔄 Processo de Transformação
+
+**Antes da automação:**
+- Cada pergunta ocupa uma coluna;
+- As respostas ficam distribuídas horizontalmente;
+- A estrutura dificulta a análise de formulários extensos.
+
+**Depois da automação:**
+- Cada resposta passa a ocupar uma linha;
+- As informações de identificação são mantidas;
+- As perguntas e respostas ficam organizadas em colunas específicas;
+- Os dados ficam mais simples de filtrar, visualizar e analisar.
+
+## 🛠️ Tecnologias Utilizadas
+
+- Microsoft Excel
+- VBA (Visual Basic for Applications)
+- Macros e automação de processos
+
+## 📊 Resultados Alcançados
+
+- Automatização da reorganização dos dados;
+- Redução do trabalho manual;
+- Melhor organização das respostas;
+- Maior facilidade de visualização e filtragem;
+- Estrutura de dados mais adequada para análises posteriores.
+
+## 📁 Estrutura do Projeto
+
+
+Sub Transformar_Sheet2()
+
+    Dim wsOrigem As Worksheet
+    Dim wsDestino As Worksheet
+    Dim ultimaLinha As Long
+    Dim ultimaColuna As Long
+    Dim linhaDestino As Long
+    Dim i As Long, j As Long
+    Dim pergunta As String
+    Dim resposta As Variant
+
+    Application.ScreenUpdating = False
+    Application.Calculation = xlCalculationManual
+
+    ' Definir aba de origem
+    Set wsOrigem = ThisWorkbook.Worksheets("Sheet2")
+
+    ' Verificar se a aba transformada já existe
+    On Error Resume Next
+    Set wsDestino = ThisWorkbook.Worksheets("Sheet2_Transformada")
+    On Error GoTo 0
+
+    ' Criar aba caso não exista
+    If wsDestino Is Nothing Then
+        Set wsDestino = ThisWorkbook.Worksheets.Add( _
+            After:=wsOrigem)
+        wsDestino.Name = "Sheet2_Transformada"
+    Else
+        wsDestino.Cells.Clear
+    End If
+
+    ' Identificar limites da base
+    ultimaLinha = wsOrigem.Cells( _
+        wsOrigem.Rows.Count, 1).End(xlUp).Row
+
+    ultimaColuna = wsOrigem.Cells( _
+        1, wsOrigem.Columns.Count).End(xlToLeft).Column
+
+    ' Criar cabeçalhos
+    For j = 1 To 5
+        wsDestino.Cells(1, j).Value = wsOrigem.Cells(1, j).Value
+    Next j
+
+    wsDestino.Cells(1, 6).Value = "Pergunta"
+    wsDestino.Cells(1, 7).Value = "Resposta"
+
+    linhaDestino = 2
+
+    ' Percorrer registros
+    For i = 2 To ultimaLinha
+
+        ' Percorrer perguntas a partir da coluna F
+        For j = 6 To ultimaColuna
+
+            resposta = wsOrigem.Cells(i, j).Value
+
+            ' Ignorar respostas vazias
+            If Not IsEmpty(resposta) And Trim(CStr(resposta)) <> "" Then
+
+                ' Copiar informações fixas
+                wsDestino.Cells(linhaDestino, 1).Resize(1, 5).Value = _
+                    wsOrigem.Cells(i, 1).Resize(1, 5).Value
+
+                ' Copiar pergunta e resposta
+                pergunta = wsOrigem.Cells(1, j).Value
+
+                wsDestino.Cells(linhaDestino, 6).Value = pergunta
+                wsDestino.Cells(linhaDestino, 7).Value = resposta
+
+                linhaDestino = linhaDestino + 1
+
+            End If
+
+        Next j
+
+    Next i
+
+    ' Ajustar visualização
+    wsDestino.Columns.AutoFit
+    wsDestino.Rows(1).Font.Bold = True
+
+    Application.Calculation = xlCalculationAutomatic
+    Application.ScreenUpdating = True
+
+    MsgBox "Transformação concluída com sucesso!", vbInformation
+
+End Sub
+
+```
+
+## ▶️ Como Utilizar
+
+1. Abra o arquivo Excel que contém a planilha `Sheet2`.
+2. Abra o Editor do VBA utilizando `ALT + F11`.
+3. Importe o arquivo `Transformar_Sheet2.bas` ou insira o código em um novo módulo.
+4. Execute a macro `Transformar_Sheet2`.
+5. Acesse a planilha `Sheet2_Transformada` para visualizar os dados reorganizados.
+
+---
+
+**Projeto desenvolvido com foco em automação, organização de dados e otimização de processos utilizando VBA.**
